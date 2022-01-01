@@ -6,9 +6,10 @@ import getWeb3 from "../getWeb3";
 const Web3Context = React.createContext(undefined);
 
 const Web3Provider = ({ children }) => {
-    const [account, setAccount] = useState([]);
+    const [account, setAccount] = useState(undefined);
     const [web3, setWeb3] = useState(undefined);
     const [contract, setContract] = useState(undefined);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -25,9 +26,37 @@ const Web3Provider = ({ children }) => {
                 deployedNetwork && deployedNetwork.address
             );
             setContract(contractInstance);
+            setIsLoaded(true);
         }
         load();
     });
+
+    const getCandidates = async () => {
+        if (!isLoaded) {
+            return [];
+        }
+        const countOfCandidates = await contract.methods
+            .countOfCandidates()
+            .call();
+        console.log(`Count of candidates: ${countOfCandidates}`);
+        let arr = [];
+        for (let i = 0; i < countOfCandidates; i++) {
+            let candidate = await contract.methods.getCandidateAt(i).call();
+            arr.push(candidate);
+        }
+        return arr;
+    };
+
+    const addCandidate = async (name) => {
+        console.log(`Adding ${name}`);
+        setIsLoaded(false);
+        try {
+            await contract.methods.addCandidate(name).send({ from: account });
+        } catch (error) {
+            console.error("Error adding candidate", error);
+        }
+        setIsLoaded(true);
+    };
 
     return (
         <Web3Context.Provider
@@ -35,6 +64,9 @@ const Web3Provider = ({ children }) => {
                 web3,
                 account,
                 contract,
+                isLoaded,
+                getCandidates,
+                addCandidate,
             }}
         >
             {children}
@@ -44,7 +76,6 @@ const Web3Provider = ({ children }) => {
 
 const useWeb3 = () => {
     const context = React.useContext(Web3Context);
-    console.log(context);
     return context;
 };
 

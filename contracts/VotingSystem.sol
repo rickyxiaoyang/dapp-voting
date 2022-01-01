@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.5.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
 contract VotingSystem {
     address public owner;
     mapping(address => Voter) voters;
     Candidate[] candidates;
-    uint256 countOfCandidates;
+    uint256 public countOfCandidates;
 
     struct Voter {
         uint256 weight;
@@ -19,7 +19,7 @@ contract VotingSystem {
         uint256 voteCount;
     }
 
-    constructor() {
+    constructor() public {
         owner = msg.sender;
     }
 
