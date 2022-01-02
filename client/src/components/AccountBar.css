@@ -1,0 +1,13 @@
+.top-bar {
+    width: 100vw;
+    color: white;
+    background-color: black;
+    padding: 0.5rem;
+}
+
+.account-container {
+    border-radius: 7px;
+    padding: 0.25rem 0.75rem;
+    background-color: whitesmoke;
+    color: black;
+}

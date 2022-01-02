@@ -9,8 +9,10 @@ export default function App() {
     return (
         <Web3Provider>
             <AccountBar />
-            <AddCandidate />
-            <CandidatesList />
+            <div className="container">
+                <AddCandidate />
+                <CandidatesList />
+            </div>
         </Web3Provider>
     );
 }
