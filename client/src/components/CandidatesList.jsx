@@ -9,7 +9,7 @@ const styles = {
 };
 
 export const CandidatesList = () => {
-    const { getCandidates, contract, isLoaded } = useWeb3();
+    const { getCandidates, isLoaded, voteForCandidate, voted } = useWeb3();
     const [candidates, setCandidates] = useState([]);
 
     useEffect(() => {
@@ -20,9 +20,6 @@ export const CandidatesList = () => {
         loadCandidates();
     }, [isLoaded]);
 
-    function voteFor(index) {
-        console.log(`Voting for ${index}`);
-    }
     return (
         <div className="mt-3" style={styles}>
             <ListGroup>
@@ -33,10 +30,11 @@ export const CandidatesList = () => {
                     >
                         {candidate.name}
                         <Button
+                            disabled={voted}
                             variant="primary"
                             size="sm"
                             onClick={() => {
-                                voteFor(index);
+                                voteForCandidate(index);
                             }}
                         >
                             Vote for {candidate.name}

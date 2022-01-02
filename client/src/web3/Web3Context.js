@@ -10,6 +10,7 @@ const Web3Provider = ({ children }) => {
     const [web3, setWeb3] = useState(undefined);
     const [contract, setContract] = useState(undefined);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [voted, setVoted] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -58,6 +59,29 @@ const Web3Provider = ({ children }) => {
         setIsLoaded(true);
     };
 
+    const voteForCandidate = async (index) => {
+        console.log(`Voting for Candidate ${index}`);
+        try {
+            await contract.methods
+                .voteForCandidateAt(index)
+                .send({ from: account });
+            await getVoteStatus();
+        } catch (error) {
+            console.error("Could not vote for candidate", error);
+        }
+    };
+
+    const getVoteStatus = async () => {
+        if (!isLoaded) {
+            return { voted: false, vote: -1 };
+        }
+        const resp = await contract.methods
+            .getUserStatus()
+            .call({ from: account });
+        setVoted(resp[0]);
+        return { voted: resp[0], vote: resp[1] };
+    };
+
     return (
         <Web3Context.Provider
             value={{
@@ -65,8 +89,11 @@ const Web3Provider = ({ children }) => {
                 account,
                 contract,
                 isLoaded,
+                voted,
                 getCandidates,
                 addCandidate,
+                voteForCandidate,
+                getVoteStatus,
             }}
         >
             {children}

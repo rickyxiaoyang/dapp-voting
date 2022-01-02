@@ -41,9 +41,14 @@ contract VotingSystem {
     function voteForCandidateAt(uint256 _index) public didNotVoteYet {
         candidates[_index].voteCount++;
         voters[msg.sender].voted = true;
+        voters[msg.sender].vote = _index;
     }
 
     function getCandidateAt(uint256 _index) public view returns (Candidate memory){
         return candidates[_index];
+    }
+
+    function getUserStatus() public view returns (bool, uint256){
+        return (voters[msg.sender].voted, voters[msg.sender].vote);
     }
 }
